@@ -181,6 +181,9 @@ def generate_rss(pages):
     # Sort pages reverse chronological
     sorted_pages = sorted(pages, key=lambda x: x["date"], reverse=True)
 
+    # Limit to latest 10 items
+    sorted_pages = sorted_pages[:10]
+
     # Base URL for the site (Update this with your actual GitHub Pages URL)
     base_url = "https://ch2ohch2oh.github.io/wsbreporter"
 
