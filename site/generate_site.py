@@ -175,6 +175,46 @@ def generate_catalog(pages, base_template, inner_template):
     print(f"Generated catalog.html")
 
 
+def generate_rss(pages):
+    rss_items = []
+    # Sort pages reverse chronological
+    sorted_pages = sorted(pages, key=lambda x: x["date"], reverse=True)
+
+    # Base URL for the site (Update this with your actual GitHub Pages URL)
+    base_url = "https://ch2ohch2oh.github.io/wsbreporter"
+
+    for page in sorted_pages:
+        title = page["title"]
+        link = f"{base_url}/{page['url']}"
+        # RFC-822 date format
+        pub_date = page["date"].strftime("%a, %d %b %Y 00:00:00 +0000")
+
+        rss_items.append(f"""
+        <item>
+            <title>{title}</title>
+            <link>{link}</link>
+            <guid>{link}</guid>
+            <pubDate>{pub_date}</pubDate>
+            <description>New market summary for {page["display_date"]}</description>
+        </item>""")
+
+    rss_content = f"""<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+    <title>Hindsight Capital Management</title>
+    <link>{base_url}</link>
+    <description>Daily market summaries from r/wallstreetbets</description>
+    <language>en-us</language>
+    {"".join(rss_items)}
+</channel>
+</rss>"""
+
+    output_path = os.path.join(HTML_DIR, "rss.xml")
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(rss_content)
+    print(f"Generated rss.xml")
+
+
 def generate_redirect_index(pages):
     if not pages:
         return
@@ -235,6 +275,7 @@ def main():
     )
     generate_catalog(pages, loaded_templates["base"], loaded_templates["catalog"])
     generate_redirect_index(pages)
+    generate_rss(pages)
     print("Site generation complete.")
 
 
