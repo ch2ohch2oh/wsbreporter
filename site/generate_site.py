@@ -32,8 +32,19 @@ def read_template(path):
 
 def get_markdown_files(path):
     files = glob.glob(os.path.join(path, "*.md"))
+
+    valid_files = []
+    for f in files:
+        basename = os.path.basename(f)
+        filename_no_ext = os.path.splitext(basename)[0]
+        try:
+            datetime.strptime(filename_no_ext, "%Y-%m-%d")
+            valid_files.append(f)
+        except ValueError:
+            print(f"Skipping non-date file: {basename}")
+
     # Sort by filename (assuming YYYY-MM-DD.md format)
-    return sorted(files)
+    return sorted(valid_files)
 
 
 def parse_date_from_filename(filename):
