@@ -3,6 +3,7 @@
 
 # Ignore HTML reports
 ./*.html
+_site/
 
 # Python
 __pycache__/

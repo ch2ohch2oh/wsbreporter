@@ -30,11 +30,11 @@ Fetched posts are summarized into a markdown letter. You can save it directly to
 Generate the static HTML site from the markdown letters:
 
 ```bash
-# Build the site
+# Build the site locally (output to _site/)
 ./venv/bin/python site/generate_site.py
 ```
 
-The site will be generated in `docs/`. Open `docs/index.html` to view the latest letter.
+The site is automatically built and deployed to GitHub Pages via GitHub Actions when you push to `main`.
 
 ### Key Options (`./start.sh` or `python run.py`)
 -   `-p, --posts NUMBER`: Number of posts to fetch (default: 25)
@@ -45,5 +45,5 @@ The site will be generated in `docs/`. Open `docs/index.html` to view the latest
 
 ## Project Structure
 -   `site/markdown/`: Source markdown letters.
--   `docs/`: Generated static website.
+-   `_site/`: Generated static website (ignored by git).
 -   `config.py`: Configuration interface (reads from `.env`).
