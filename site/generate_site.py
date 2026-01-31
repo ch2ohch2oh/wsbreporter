@@ -246,6 +246,63 @@ def generate_redirect_index(pages):
     print(f"Generated index.html (redirect to {latest_url})")
 
 
+def generate_disclaimer(base_template):
+    disclaimer_content = """
+    <h1>Legal Disclaimer</h1>
+    
+    <p style="text-align: center; font-style: italic; margin-bottom: 30px;">Last Updated: January 31, 2026</p>
+    
+    <h2>AI-Generated Content Notice</h2>
+    <p>The content on this website is generated using artificial intelligence (AI) technology. All summaries, analyses, and commentary are produced by automated systems and should be understood as such. The AI processes publicly available information from online forums and other sources, but does not verify the accuracy or reliability of such information.</p>
+    
+    <h2>Not Financial Advice</h2>
+    <p>Nothing on this website constitutes financial, investment, legal, or professional advice. The content is provided for informational and entertainment purposes only. You should not rely on any information on this site as a basis for making financial or investment decisions. Always consult with qualified financial advisors, accountants, and legal professionals before making any investment decisions.</p>
+    
+    <h2>No Warranty or Guarantee</h2>
+    <p>This website and its content are provided "as is" without any warranties of any kind, either express or implied. We make no representations or warranties regarding the accuracy, completeness, reliability, or timeliness of any content on this site. The AI-generated summaries may contain errors, omissions, or inaccuracies.</p>
+    
+    <h2>Limitation of Liability</h2>
+    <p>To the fullest extent permitted by law, we disclaim all liability for any direct, indirect, incidental, consequential, or punitive damages arising from your use of this website or reliance on its content. This includes, but is not limited to, any financial losses, lost profits, or damages resulting from investment decisions made based on information found on this site.</p>
+    
+    <h2>Information Accuracy</h2>
+    <p>While we strive to provide useful summaries, the AI system may misinterpret, misrepresent, or incorrectly summarize source material. Market data, stock prices, and other financial information may be outdated, incomplete, or inaccurate. Always verify information through official and authoritative sources before taking any action.</p>
+    
+    <h2>Third-Party Content</h2>
+    <p>This website summarizes content from third-party sources, including online forums and social media. We do not endorse, verify, or take responsibility for the accuracy or reliability of such third-party content. The views and opinions expressed in the source material do not necessarily reflect our own views or opinions.</p>
+    
+    <h2>Investment Risks</h2>
+    <p>Investing in financial markets involves substantial risk of loss. Past performance is not indicative of future results. The value of investments can go down as well as up, and you may lose some or all of your invested capital. Only invest money that you can afford to lose.</p>
+    
+    <h2>Use at Your Own Risk</h2>
+    <p>By accessing and using this website, you acknowledge and agree that you do so at your own risk. You are solely responsible for any decisions you make based on the content provided on this site.</p>
+    
+    <h2>Changes to This Disclaimer</h2>
+    <p>We reserve the right to modify this disclaimer at any time without prior notice. Your continued use of this website following any changes constitutes your acceptance of such changes.</p>
+    
+    <h2>Contact</h2>
+    <p>If you have any questions about this disclaimer, please contact us through our GitHub repository.</p>
+    
+    <hr>
+    
+    <p style="text-align: center; margin-top: 40px;">
+        <a href="index.html">Return to Latest Letter</a> • <a href="catalog.html">View All Letters</a>
+    </p>
+    """
+
+    # Fill Base Template for Disclaimer
+    page_html = (
+        base_template.replace("{{SUBREDDIT}}", "wallstreetbets")
+        .replace("{{DATE_YMD}}", datetime.now().strftime("%Y-%m-%d"))
+        .replace("{{DATE_FULL}}", format_date(datetime.now()))
+        .replace("{{CONTENT}}", disclaimer_content)
+    )
+
+    output_path = os.path.join(HTML_DIR, "disclaimer.html")
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(page_html)
+    print(f"Generated disclaimer.html")
+
+
 def main():
     print("Starting site generation...")
 
@@ -281,6 +338,7 @@ def main():
     generate_catalog(pages, loaded_templates["base"], loaded_templates["catalog"])
     generate_redirect_index(pages)
     generate_rss(pages)
+    generate_disclaimer(loaded_templates["base"])
     print("Site generation complete.")
 
 
