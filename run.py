@@ -60,6 +60,18 @@ if __name__ == "__main__":
         action="store_true",
         help="Save summary as HTML file (default: console output only)",
     )
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        help="Custom output filename for the HTML report",
+    )
+    parser.add_argument(
+        "-mo",
+        "--markdown-output",
+        type=str,
+        help="Custom output filename for the Markdown report",
+    )
     args = parser.parse_args()
 
     # Import and run
@@ -72,4 +84,6 @@ if __name__ == "__main__":
         sort_by=args.sort,
         skip_pinned=args.skip_pinned,
         html_output=args.html,
+        output_file=args.output,
+        markdown_output_file=args.markdown_output,
     )

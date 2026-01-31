@@ -15,6 +15,8 @@ def main(
     sort_by="hot",
     skip_pinned=False,
     html_output=False,
+    output_file=None,
+    markdown_output_file=None,
 ):
     # Use provided arguments or fall back to config defaults
     num_posts = num_posts or config.NUM_POSTS_TO_FETCH
@@ -116,11 +118,34 @@ def main(
     formatted_output = output_formatter.format_summary(summary)
     print("\n" + formatted_output)
 
-    # Save as HTML if requested
-    if html_output:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        html_filename = f"wsb_summary_{timestamp}.html"
-        html_path = os.path.join(os.getcwd(), html_filename)
+    # Save as Markdown if requested
+    if markdown_output_file:
+        try:
+            # Handle absolte path or relative path
+            if os.path.isabs(markdown_output_file):
+                md_path = markdown_output_file
+            else:
+                md_path = os.path.join(os.getcwd(), markdown_output_file)
+
+            with open(md_path, "w", encoding="utf-8") as f:
+                f.write(formatted_output)
+            print(f"\n✅ Markdown report saved to: {md_path}")
+        except Exception as e:
+            print(f"\n❌ Failed to save Markdown report: {e}")
+
+    # Save as HTML if requested or if output_file is provided
+    if html_output or output_file:
+        if output_file:
+            html_filename = output_file
+        else:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            html_filename = f"wsb_summary_{timestamp}.html"
+
+        # Handle absolute path or relative path
+        if os.path.isabs(html_filename):
+            html_path = html_filename
+        else:
+            html_path = os.path.join(os.getcwd(), html_filename)
 
         if html_formatter.save_html_report(summary, html_path, subreddit):
             print(f"\n✅ HTML report saved to: {html_path}")

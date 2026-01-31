@@ -1,5 +1,6 @@
 from . import config
 
+
 def format_summary(summary_text: str) -> str:
     """
     Formats the summary text based on the configured output format.
@@ -15,11 +16,10 @@ def format_summary(summary_text: str) -> str:
         # a somewhat structured output that can be enhanced with Markdown.
         # This could be extended to add more specific Markdown elements
         # if the Gemini output needs further parsing/restructuring.
-        formatted_output = f"# WSB Daily Summary\n\n{summary_text}"
-        return formatted_output
+        return summary_text
     else:  # "plain" or any other value defaults to plain text
-        formatted_output = f"WSB Daily Summary\n\n{summary_text}"
-        return formatted_output
+        return summary_text
+
 
 if __name__ == "__main__":
     # This block is for testing purposes.
