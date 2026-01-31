@@ -26,7 +26,16 @@ Fetched posts are summarized into a markdown letter. You can save it directly to
 ./start.sh --markdown-output site/markdown/$(date +%Y-%m-%d).md
 ```
 
-### 2. Update the Website
+### 2. Daily Automation
+To automate the entire process (generate + push to GitHub for deployment), use the provided script:
+
+```bash
+./daily_update.sh
+```
+
+You can set this up as a cron job to run daily.
+
+### 3. Update the Website
 Generate the static HTML site from the markdown letters:
 
 ```bash
