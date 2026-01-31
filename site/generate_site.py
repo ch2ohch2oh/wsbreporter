@@ -204,6 +204,7 @@ def generate_rss(pages):
 
     rss_content = f"""<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
+<meta name="follow.it-verification-code" content="sy0DsFNYN9NFzQaK17GB"/>
 <channel>
     <title>Hindsight Capital Management</title>
     <link>{base_url}</link>
