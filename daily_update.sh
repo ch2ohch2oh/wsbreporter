@@ -6,6 +6,10 @@ cd "$(dirname "$0")"
 # Activate virtual environment
 source venv/bin/activate
 
+# Pull latest changes
+echo "Pulling latest changes..."
+git pull
+
 # Get today's date
 TODAY=$(date +%Y-%m-%d)
 FILENAME="site/markdown/${TODAY}.md"
