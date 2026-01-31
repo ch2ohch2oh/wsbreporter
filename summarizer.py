@@ -22,7 +22,11 @@ def generate_summary(all_posts_content: str) -> str | None:
         import os
 
         project_root = os.path.dirname(os.path.abspath(__file__))
-        template_path = os.path.join(project_root, "templates", "prompt_template.txt")
+        # Allow absolute paths or paths relative to project root
+        if os.path.isabs(config.PROMPT_TEMPLATE_PATH):
+            template_path = config.PROMPT_TEMPLATE_PATH
+        else:
+            template_path = os.path.join(project_root, config.PROMPT_TEMPLATE_PATH)
 
         try:
             with open(template_path, "r") as f:
@@ -32,8 +36,13 @@ def generate_summary(all_posts_content: str) -> str | None:
             return None
 
         # Fill in the template
+        from datetime import datetime
+
+        current_date = datetime.now().strftime("%B %d, %Y")
         prompt = prompt_template.format(
-            content=all_posts_content, model_name=config.GEMINI_MODEL_NAME
+            content=all_posts_content,
+            model_name=config.GEMINI_MODEL_NAME,
+            date=current_date,
         )
 
         response = client.models.generate_content(
