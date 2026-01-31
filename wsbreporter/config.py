@@ -7,7 +7,9 @@ load_dotenv()
 # Reddit API credentials (replace with your actual credentials)
 REDDIT_CLIENT_ID = os.getenv("REDDIT_CLIENT_ID")
 REDDIT_CLIENT_SECRET = os.getenv("REDDIT_CLIENT_SECRET")
-REDDIT_USER_AGENT = "wsb_summary_app_v1"  # A unique string to identify your application
+REDDIT_USER_AGENT = os.getenv(
+    "REDDIT_USER_AGENT"
+)  # A unique string to identify your application
 
 # Gemini API key (replace with your actual API key)
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")

@@ -21,7 +21,7 @@ def generate_summary(all_posts_content: str) -> str | None:
         # Read the prompt template from file
         import os
 
-        project_root = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         # Allow absolute paths or paths relative to project root
         if os.path.isabs(config.PROMPT_TEMPLATE_PATH):
             template_path = config.PROMPT_TEMPLATE_PATH

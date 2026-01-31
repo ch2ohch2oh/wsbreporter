@@ -29,7 +29,7 @@ def markdown_to_html(markdown_text: str, subreddit: str = "wallstreetbets") -> s
 
     import os
 
-    project_root = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     template_path = os.path.join(project_root, "templates", "report_template.html")
 
     try:

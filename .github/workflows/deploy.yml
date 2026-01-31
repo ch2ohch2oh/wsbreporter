@@ -36,7 +36,9 @@ jobs:
           pip install -r requirements.txt
 
       - name: Create dummy .env
-        run: echo "REDDIT_CLIENT_ID=dummy" > .env
+        run: |
+          echo "REDDIT_CLIENT_ID=dummy" > .env
+          echo "REDDIT_USER_AGENT=dummy_agent" >> .env
 
       - name: Generate Site
         run: python site/generate_site.py
