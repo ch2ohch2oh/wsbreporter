@@ -140,6 +140,7 @@ def generate_pages(markdown_files, base_template, inner_template, nav_template):
                 "url": output_filename,
                 "title": title,
                 "display_date": full_date_str,
+                "content_html": html_content,
             }
         )
         print(f"Generated {output_filename}")
@@ -195,7 +196,7 @@ def generate_rss(pages):
             <link>{link}</link>
             <guid>{link}</guid>
             <pubDate>{pub_date}</pubDate>
-            <description>New market summary for {page["display_date"]}</description>
+            <description><![CDATA[{page["content_html"]}]]></description>
         </item>""")
 
     rss_content = f"""<?xml version="1.0" encoding="UTF-8" ?>
