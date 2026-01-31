@@ -16,7 +16,7 @@ from datetime import datetime
 BASE_DIR = script_dir  # We can use the captured script_dir
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
 MARKDOWN_DIR = os.path.join(BASE_DIR, "markdown")
-HTML_DIR = os.path.join(BASE_DIR, "html")
+HTML_DIR = os.path.join(PROJECT_ROOT, "docs")
 TEMPLATE_PATH = os.path.join(PROJECT_ROOT, "templates", "report_template.html")
 
 

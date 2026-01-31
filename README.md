@@ -34,7 +34,7 @@ Generate the static HTML site from the markdown letters:
 ./venv/bin/python site/generate_site.py
 ```
 
-The site will be generated in `site/html/`. Open `site/html/index.html` to view the latest letter.
+The site will be generated in `docs/`. Open `docs/index.html` to view the latest letter.
 
 ### Key Options (`./start.sh` or `python run.py`)
 -   `-p, --posts NUMBER`: Number of posts to fetch (default: 25)
@@ -45,5 +45,5 @@ The site will be generated in `site/html/`. Open `site/html/index.html` to view 
 
 ## Project Structure
 -   `site/markdown/`: Source markdown letters.
--   `site/html/`: Generated static website.
+-   `docs/`: Generated static website.
 -   `config.py`: Configuration interface (reads from `.env`).
