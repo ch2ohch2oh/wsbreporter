@@ -8,9 +8,9 @@ if script_dir in sys.path:
     # We remove it from the start of the list where python adds it by default
     sys.path = [p for p in sys.path if p != script_dir]
 
-import glob
-import markdown
-from datetime import datetime
+import glob  # noqa: E402
+import markdown  # noqa: E402
+from datetime import datetime  # noqa: E402
 
 # Define paths
 BASE_DIR = script_dir  # We can use the captured script_dir
@@ -173,7 +173,7 @@ def generate_catalog(pages, base_template, inner_template):
     output_path = os.path.join(HTML_DIR, "catalog.html")
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(page_html)
-    print(f"Generated catalog.html")
+    print("Generated catalog.html")
 
 
 def generate_rss(pages):
@@ -217,7 +217,7 @@ def generate_rss(pages):
     output_path = os.path.join(HTML_DIR, "rss.xml")
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(rss_content)
-    print(f"Generated rss.xml")
+    print("Generated rss.xml")
 
 
 def generate_redirect_index(pages):
@@ -300,7 +300,7 @@ def generate_disclaimer(base_template):
     output_path = os.path.join(HTML_DIR, "disclaimer.html")
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(page_html)
-    print(f"Generated disclaimer.html")
+    print("Generated disclaimer.html")
 
 
 def main():
