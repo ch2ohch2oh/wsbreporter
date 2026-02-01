@@ -7,7 +7,7 @@ Instructions:
     -   **Header**: Include the firm name, motto, To, Date (use the EXACT date provided in the template), and a creative Subject line.
     -   **Salutation**: Address Hindsight Global Investors creatively.
     -   **Introduction**: A paragraph synthesizing the overall market vibe from the comments. Use links to threads where appropriate.
-    -   **The Trending Tickers**: A section listing 5-7 top tickers.
+    -   **The Trending Tickers**: A section listing 10-15 top tickers.
         -   Format: **[TICKER]:** Summary text...
         -   The summary MUST link specific phrases to the URL of the source comment/post.
     -   **Conclusion**: A final piece of "advice" or observation.
