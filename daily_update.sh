@@ -3,9 +3,18 @@
 # Navigate to the script's directory
 cd "$(dirname "$0")"
 
+# Source .env if it exists
+if [ -f .env ]; then
+    source .env
+fi
+
 # Pull latest changes
 echo "Pulling latest changes..."
-git pull
+if [ -n "$GITHUB_TOKEN" ]; then
+    git pull "https://$GITHUB_TOKEN@github.com/ch2ohch2oh/wsbreporter.git" main
+else
+    git pull
+fi
 
 # Create venv if it doesn't exist
 if [ ! -d "venv" ]; then
@@ -37,7 +46,12 @@ if [ -f "$FILENAME" ]; then
     echo "Pushing to GitHub..."
     git add "$FILENAME"
     git commit -m "Auto-generate letter for $TODAY"
-    git push
+    
+    if [ -n "$GITHUB_TOKEN" ]; then
+        git push "https://$GITHUB_TOKEN@github.com/ch2ohch2oh/wsbreporter.git" main
+    else
+        git push
+    fi
     
     echo "Done! The site will be built and deployed by GitHub Actions shortly."
 else
