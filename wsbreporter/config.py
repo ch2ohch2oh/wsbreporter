@@ -21,7 +21,7 @@ SUBREDDIT_NAME = "wallstreetbets"
 NUM_POSTS_TO_FETCH = 25
 
 # Number of top comments to fetch per post
-NUM_COMMENTS_TO_FETCH = 20
+NUM_COMMENTS_TO_FETCH = 50
 
 # Output format: "plain" or "markdown"
 OUTPUT_FORMAT = "markdown"

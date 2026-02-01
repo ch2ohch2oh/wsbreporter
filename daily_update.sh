@@ -25,10 +25,6 @@ fi
 # Activate virtual environment
 source venv/bin/activate
 
-# Install dependencies
-echo "Installing dependencies..."
-pip install -r requirements.txt
-
 # Get today's date
 TODAY=$(date +%Y-%m-%d)
 FILENAME="site/markdown/${TODAY}.md"
