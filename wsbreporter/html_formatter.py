@@ -5,6 +5,8 @@ Converts markdown summaries to styled HTML.
 
 from datetime import datetime
 import markdown
+import re
+import pytz
 
 
 def markdown_to_html(markdown_text: str, subreddit: str = "wallstreetbets") -> str:
@@ -21,9 +23,32 @@ def markdown_to_html(markdown_text: str, subreddit: str = "wallstreetbets") -> s
     # Convert markdown to HTML
     html_content = markdown.markdown(markdown_text, extensions=["extra", "nl2br"])
 
-    # Get current date/time
-    now = datetime.now()
-    date_str = now.strftime("%B %d, %Y at %I:%M %p")
+    # Extract date from markdown text or default to now
+    # Look for "**Date:** {date_string}"
+    date_match = re.search(r"\*\*Date:\*\*\s*(.+)", markdown_text)
+
+    ny_tz = pytz.timezone("America/New_York")
+    base_date = datetime.now(ny_tz)
+
+    date_str = base_date.strftime("%B %d, %Y at %I:%M %p %Z")  # Default if not found
+
+    if date_match:
+        extracted_date = date_match.group(1).strip()
+        try:
+            # Try parsing with time: "February 01, 2026 at 02:45 PM EST"
+            parsed_date = datetime.strptime(extracted_date, "%B %d, %Y at %I:%M %p %Z")
+            date_str = parsed_date.strftime("%B %d, %Y at %I:%M %p %Z")
+            base_date = parsed_date
+        except ValueError:
+            try:
+                # Try parsing old format: "February 01, 2026"
+                parsed_date = datetime.strptime(extracted_date, "%B %d, %Y")
+                # If old format, just use the extracted string as is for the "Full Date" display
+                date_str = extracted_date
+                base_date = parsed_date  # This will have 00:00:00 time
+            except ValueError:
+                # If all parsing fails, fall back to current time (already set)
+                pass
 
     # Valid keys: {{SUBREDDIT}}, {{DATE_YMD}}, {{BASE_URL}}, {{CONTENT}}, {{DATE_FULL}}
 
@@ -37,7 +62,7 @@ def markdown_to_html(markdown_text: str, subreddit: str = "wallstreetbets") -> s
             template = f.read()
 
         html_doc = template.replace("{{SUBREDDIT}}", subreddit)
-        html_doc = html_doc.replace("{{DATE_YMD}}", now.strftime("%Y-%m-%d"))
+        html_doc = html_doc.replace("{{DATE_YMD}}", base_date.strftime("%Y-%m-%d"))
         html_doc = html_doc.replace("{{CONTENT}}", html_content)
         html_doc = html_doc.replace("{{DATE_FULL}}", date_str)
 

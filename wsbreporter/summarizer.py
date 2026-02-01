@@ -37,8 +37,10 @@ def generate_summary(all_posts_content: str) -> str | None:
 
         # Fill in the template
         from datetime import datetime
+        import pytz
 
-        current_date = datetime.now().strftime("%B %d, %Y")
+        ny_tz = pytz.timezone("America/New_York")
+        current_date = datetime.now(ny_tz).strftime("%B %d, %Y at %I:%M %p %Z")
         prompt = prompt_template.format(
             content=all_posts_content,
             model_name=config.GEMINI_MODEL_NAME,
