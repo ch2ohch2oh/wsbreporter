@@ -8,8 +8,8 @@ set -e
 INSTANCE_NAME="wsbreporter-vm"
 ZONE="us-east1-b"
 MACHINE_TYPE="e2-micro"
-IMAGE_FAMILY="debian-12"
-IMAGE_PROJECT="debian-cloud"
+IMAGE_FAMILY="ubuntu-2204-lts"
+IMAGE_PROJECT="ubuntu-os-cloud"
 BOOT_DISK_SIZE="10GB"
 BOOT_DISK_TYPE="pd-standard"
 
