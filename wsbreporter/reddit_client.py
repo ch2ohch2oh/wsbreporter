@@ -60,13 +60,20 @@ def fetch_top_posts(num_posts=None, subreddit=None, sort_by="hot", skip_pinned=F
                     break
                 if hasattr(comment, "body"):
                     comment_link = f"https://www.reddit.com{comment.permalink}"
-                    post_comments.append({"body": comment.body, "url": comment_link})
+                    post_comments.append(
+                        {
+                            "body": comment.body,
+                            "url": comment_link,
+                            "score": comment.score,
+                        }
+                    )
 
             posts_data.append(
                 {
                     "title": submission.title,
                     "selftext": submission.selftext,
                     "url": submission.url,
+                    "score": submission.score,
                     "comments": post_comments,
                     "is_pinned": submission.stickied,  # Mark if it's a pinned post
                 }
@@ -78,19 +85,72 @@ def fetch_top_posts(num_posts=None, subreddit=None, sort_by="hot", skip_pinned=F
 
 
 if __name__ == "__main__":
-    # This block is for testing purposes.
-    # Replace placeholder API keys in config.py before running.
-    print(
-        f"Fetching top {config.NUM_POSTS_TO_FETCH} posts from r/{config.SUBREDDIT_NAME}..."
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Fetch posts from a subreddit using the Reddit API"
     )
-    posts = fetch_top_posts()
+    parser.add_argument(
+        "-s",
+        "--subreddit",
+        type=str,
+        default=config.SUBREDDIT_NAME,
+        help=f"Subreddit to fetch from (default: {config.SUBREDDIT_NAME})",
+    )
+    parser.add_argument(
+        "-n",
+        "--num-posts",
+        type=int,
+        default=config.NUM_POSTS_TO_FETCH,
+        help=f"Number of posts to fetch (default: {config.NUM_POSTS_TO_FETCH})",
+    )
+    parser.add_argument(
+        "--sort",
+        type=str,
+        choices=["hot", "new", "top", "rising"],
+        default="hot",
+        help="How to sort posts (default: hot)",
+    )
+    parser.add_argument(
+        "--skip-pinned",
+        action="store_true",
+        help="Skip pinned/stickied posts like weekly threads",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Show detailed output including comments",
+    )
+
+    args = parser.parse_args()
+
+    print(
+        f"Fetching {args.num_posts} {args.sort} posts from r/{args.subreddit}"
+        + (" (skipping pinned)" if args.skip_pinned else "")
+        + "..."
+    )
+
+    posts = fetch_top_posts(
+        num_posts=args.num_posts,
+        subreddit=args.subreddit,
+        sort_by=args.sort,
+        skip_pinned=args.skip_pinned,
+    )
+
     if posts:
         for i, post in enumerate(posts):
             print(f"\n--- Post {i + 1} ---")
             print(f"Title: {post['title']}")
-            print(f"Selftext: {post['selftext'][:200]}...")  # Print first 200 chars
-            print(
-                f"Comments: {[c[:50] for c in post['comments']]}..."
-            )  # Print first 50 chars of comments
+            print(f"Score: {post['score']} upvotes")
+            print(f"URL: {post['url']}")
+            if post["selftext"]:
+                print(f"Selftext: {post['selftext'][:200]}...")  # Print first 200 chars
+            if args.verbose and post["comments"]:
+                print(f"Comments ({len(post['comments'])}):")
+                for j, comment in enumerate(post["comments"][:5], 1):  # Show first 5
+                    print(
+                        f"  {j}. [{comment['score']} upvotes] {comment['body'][:100]}..."
+                    )
     else:
         print("Failed to fetch posts.")
