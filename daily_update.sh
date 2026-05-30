@@ -8,7 +8,11 @@ if [ -f .env ]; then
 fi
 
 echo "Pulling latest changes..."
-git pull origin main
+if [ -n "$GITHUB_TOKEN" ]; then
+    git pull "https://$GITHUB_TOKEN@github.com/ch2ohch2oh/wsbreporter.git" main
+else
+    git pull origin main
+fi
 
 echo "Syncing dependencies..."
 uv sync --frozen
@@ -23,7 +27,11 @@ if [ -f "site/markdown/${TODAY}.md" ]; then
     echo "Pushing to GitHub..."
     git add site/markdown/"${TODAY}".md
     git commit -m "Auto-generate letter for $TODAY"
-    git push origin main
+    if [ -n "$GITHUB_TOKEN" ]; then
+        git push "https://$GITHUB_TOKEN@github.com/ch2ohch2oh/wsbreporter.git" main
+    else
+        git push origin main
+    fi
     echo "Done."
 else
     echo "Error: Letter not generated."
