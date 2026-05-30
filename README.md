@@ -6,7 +6,7 @@ A tool to fetch and summarize Reddit posts from r/wallstreetbets using a configu
 
 1.  **Install dependencies**:
     ```bash
-    ./venv/bin/pip install -r requirements.txt
+    uv sync
     ```
 
 2.  **Configure API keys**:
@@ -70,12 +70,12 @@ Generate the static HTML site from the markdown letters:
 
 ```bash
 # Build the site locally (output to _site/)
-./venv/bin/python site/generate_site.py
+uv run python site/generate_site.py
 ```
 
 The site is automatically built and deployed to GitHub Pages via GitHub Actions when you push to `main`.
 
-### Key Options (`./start.sh` or `python run.py`)
+### Key Options (`./start.sh` or `uv run python run.py`)
 -   `-p, --posts NUMBER`: Number of posts to fetch (default: 25)
 -   `-s, --subreddit NAME`: Subreddit to fetch from (default: wallstreetbets)
 -   `--sort TYPE`: `hot`, `new`, `top`, `rising` (default: hot)

@@ -1,0 +1,17 @@
+[project]
+name = "wsbreporter"
+version = "0.1.0"
+description = "Fetch and summarize Reddit posts from r/wallstreetbets and generate a static website of letters."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "google-genai",
+    "markdown",
+    "openai",
+    "praw",
+    "python-dotenv",
+    "pytz",
+]
+
+[tool.uv]
+package = false

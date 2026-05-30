@@ -16,14 +16,9 @@ else
     git pull
 fi
 
-# Create venv if it doesn't exist
-if [ ! -d "venv" ]; then
-    echo "Creating virtual environment..."
-    python3 -m venv venv
-fi
-
-# Activate virtual environment
-source venv/bin/activate
+# Install dependencies
+echo "Syncing Python dependencies..."
+uv sync --frozen || exit 1
 
 # Get today's date
 TODAY=$(date +%Y-%m-%d)
@@ -32,7 +27,7 @@ FILENAME="site/markdown/${TODAY}.md"
 echo "Generating letter for $TODAY..."
 
 # Generate the letter
-python run.py --markdown-output "$FILENAME"
+uv run python run.py --markdown-output "$FILENAME"
 
 # Check if generation was successful
 if [ -f "$FILENAME" ]; then

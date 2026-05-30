@@ -12,19 +12,18 @@ echo "Updating system packages..."
 sudo apt-get update
 sudo apt-get upgrade -y
 
-# Install Python 3.11 and pip
-echo "Installing Python 3.11..."
-sudo apt-get install -y python3.11 python3.11-venv python3-pip git
+# Install system dependencies
+echo "Installing system dependencies..."
+sudo apt-get install -y curl git
 
-# Create virtual environment
-echo "Creating Python virtual environment..."
-python3.11 -m venv venv
+# Install uv
+echo "Installing uv..."
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
 
-# Activate virtual environment and install dependencies
-echo "Installing Python dependencies..."
-source venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+# Install Python dependencies
+echo "Syncing Python dependencies..."
+uv sync --frozen
 
 # Set up environment variables
 echo ""

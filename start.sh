@@ -1,9 +1,10 @@
 #!/bin/bash
-# Simple wrapper script to run wsbreporter with the virtual environment
+# Simple wrapper script to run wsbreporter with uv
 
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Run the Python script using the venv's Python interpreter
+# Run the Python script in uv's managed environment.
 # Pass all arguments through using "$@"
-"$SCRIPT_DIR/venv/bin/python3" "$SCRIPT_DIR/run.py" "$@"
+cd "$SCRIPT_DIR" || exit 1
+uv run python run.py "$@"
