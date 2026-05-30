@@ -12,10 +12,7 @@ import glob  # noqa: E402
 import markdown  # noqa: E402
 from datetime import datetime  # noqa: E402
 
-project_root = os.path.dirname(script_dir)
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-from wsbreporter import config  # noqa: E402
+
 
 # Define paths
 BASE_DIR = script_dir  # We can use the captured script_dir
@@ -131,7 +128,6 @@ def generate_pages(markdown_files, base_template, inner_template, nav_template):
             base_template.replace("{{SUBREDDIT}}", "wallstreetbets")
             .replace("{{DATE_YMD}}", file_date.strftime("%Y-%m-%d"))
             .replace("{{DATE_FULL}}", full_date_str)
-            .replace("{{MODEL_NAME}}", config.get_llm_display_name())
             .replace("{{CONTENT}}", full_content)
         )
 
@@ -187,7 +183,6 @@ def generate_catalog(pages, base_template, inner_template):
         base_template.replace("{{SUBREDDIT}}", "wallstreetbets")
         .replace("{{DATE_YMD}}", datetime.now().strftime("%Y-%m-%d"))
         .replace("{{DATE_FULL}}", format_date(datetime.now()))
-        .replace("{{MODEL_NAME}}", config.get_llm_display_name())
         .replace("{{CONTENT}}", catalog_content)
     )
 
@@ -315,7 +310,6 @@ def generate_disclaimer(base_template):
         base_template.replace("{{SUBREDDIT}}", "wallstreetbets")
         .replace("{{DATE_YMD}}", datetime.now().strftime("%Y-%m-%d"))
         .replace("{{DATE_FULL}}", format_date(datetime.now()))
-        .replace("{{MODEL_NAME}}", config.get_llm_display_name())
         .replace("{{CONTENT}}", disclaimer_content)
     )
 

@@ -10,8 +10,6 @@ import markdown
 import re
 import pytz
 
-from . import config
-
 
 def markdown_to_html(markdown_text: str, subreddit: str = "wallstreetbets") -> str:
     """
@@ -65,7 +63,7 @@ def markdown_to_html(markdown_text: str, subreddit: str = "wallstreetbets") -> s
         html_doc = html_doc.replace("{{DATE_YMD}}", base_date.strftime("%Y-%m-%d"))
         html_doc = html_doc.replace("{{CONTENT}}", html_content)
         html_doc = html_doc.replace("{{DATE_FULL}}", date_str)
-        html_doc = html_doc.replace("{{MODEL_NAME}}", config.get_llm_display_name())
+
 
     except FileNotFoundError:
         print(f"Error: Template file not found at {template_path}")
