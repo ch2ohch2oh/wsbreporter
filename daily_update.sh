@@ -21,7 +21,7 @@ just site
 
 if [ -f "site/markdown/${TODAY}.md" ]; then
     echo "Pushing to GitHub..."
-    git add site/markdown/"${TODAY}".md _site/
+    git add site/markdown/"${TODAY}".md
     git commit -m "Auto-generate letter for $TODAY"
     git push origin main
     echo "Done."
