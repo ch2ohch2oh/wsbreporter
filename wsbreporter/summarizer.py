@@ -1,10 +1,10 @@
-from google import genai
 from . import config
+from . import llm
 
 
 def generate_summary(all_posts_content: str) -> str | None:
     """
-    Generates a one-page summary of the aggregated Reddit posts using the Gemini model.
+    Generates a one-page summary of the aggregated Reddit posts using the configured LLM.
 
     Args:
         all_posts_content (str): A concatenated string of titles, selftexts, and top comments
@@ -15,9 +15,6 @@ def generate_summary(all_posts_content: str) -> str | None:
         None: If an error occurs during summarization.
     """
     try:
-        # Initialize the client with API key
-        client = genai.Client(api_key=config.GEMINI_API_KEY)
-
         # Read the prompt template from file
         import os
 
@@ -43,16 +40,14 @@ def generate_summary(all_posts_content: str) -> str | None:
         current_date = datetime.now(ny_tz).strftime("%B %d, %Y at %I:%M %p %Z")
         prompt = prompt_template.format(
             content=all_posts_content,
-            model_name=config.GEMINI_MODEL_NAME,
+            model_name=config.get_llm_display_name(),
             date=current_date,
         )
 
-        response = client.models.generate_content(
-            model=config.GEMINI_MODEL_NAME, contents=prompt
-        )
+        response = llm.generate([llm.LLMMessage(role="user", content=prompt)])
 
         return response.text
 
     except Exception as e:
-        print(f"Error generating summary with Gemini: {e}")
+        print(f"Error generating summary with {config.get_llm_display_name()}: {e}")
         return None

@@ -3,6 +3,7 @@ from . import summarizer
 from . import output_formatter
 from . import html_formatter
 from . import config
+from . import llm
 import argparse
 from datetime import datetime
 import os
@@ -22,15 +23,14 @@ def main(
     num_posts = num_posts or config.NUM_POSTS_TO_FETCH
     subreddit = subreddit or config.SUBREDDIT_NAME
 
-    # Ensure API keys are set
-    if (
-        config.REDDIT_CLIENT_ID == "YOUR_REDDIT_CLIENT_ID"
-        or config.REDDIT_CLIENT_SECRET == "YOUR_REDDIT_CLIENT_SECRET"
-        or config.GEMINI_API_KEY == "YOUR_GEMINI_API_KEY"
-    ):
-        print(
-            "Error: Please update your API keys in wsbreporter/config.py before running."
-        )
+    if not config.REDDIT_CLIENT_ID or not config.REDDIT_CLIENT_SECRET:
+        print("Error: Please set your Reddit API keys in .env before running.")
+        return
+
+    try:
+        llm.validate_config()
+    except llm.LLMConfigError as e:
+        print(f"Error: {e}")
         return
 
     sort_label = sort_by if sort_by != "hot" else "hot (trending)"
@@ -67,7 +67,7 @@ def main(
             if post.get("is_pinned"):
                 print("(This is a pinned post)")
 
-        # Only include selftext if it's not empty, to avoid feeding irrelevant empty strings to Gemini
+        # Only include selftext if it's not empty, to avoid feeding irrelevant empty strings to the LLM
         if post["selftext"].strip():
             all_posts_content += f"{post['selftext']}\n"
             if verbose:
@@ -106,12 +106,15 @@ def main(
                         print(f"  - {display_text}")
         all_posts_content += "\n"
 
-    print("Generating summary with Gemini (this may take a moment)...")
+    print(
+        f"Generating summary with {config.get_llm_display_name()} "
+        "(this may take a moment)..."
+    )
     summary = summarizer.generate_summary(all_posts_content)
 
     if not summary:
         print(
-            "Failed to generate summary. Please check your Gemini API key and network connection."
+            "Failed to generate summary. Please check your LLM API key and network connection."
         )
         return
 

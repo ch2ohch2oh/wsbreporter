@@ -6,16 +6,16 @@ def format_summary(summary_text: str) -> str:
     Formats the summary text based on the configured output format.
 
     Args:
-        summary_text (str): The raw summary text from the Gemini model.
+        summary_text (str): The raw summary text from the configured LLM.
 
     Returns:
         str: The formatted summary.
     """
     if config.OUTPUT_FORMAT == "markdown":
-        # For simplicity, we assume the Gemini model already provides
+        # For simplicity, we assume the LLM already provides
         # a somewhat structured output that can be enhanced with Markdown.
         # This could be extended to add more specific Markdown elements
-        # if the Gemini output needs further parsing/restructuring.
+        # if the LLM output needs further parsing/restructuring.
         return summary_text
     else:  # "plain" or any other value defaults to plain text
         return summary_text

@@ -1,5 +1,6 @@
 praw
 google-genai
+openai
 markdown
 python-dotenv
 pytz

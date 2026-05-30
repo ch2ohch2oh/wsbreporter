@@ -1,6 +1,6 @@
 # WSB Reporter
 
-A tool to fetch and summarize Reddit posts from r/wallstreetbets using Gemini AI, and generate a static website of the letters.
+A tool to fetch and summarize Reddit posts from r/wallstreetbets using a configurable LLM, and generate a static website of the letters.
 
 ## Setup
 
@@ -10,10 +10,40 @@ A tool to fetch and summarize Reddit posts from r/wallstreetbets using Gemini AI
     ```
 
 2.  **Configure API keys**:
-    Copy the example environment file and fill in your Reddit and Gemini API credentials:
+    Copy the example environment file and fill in your Reddit and LLM API credentials:
     ```bash
     cp .env.example .env
     # Edit .env with your keys
+    ```
+
+    Gemini is the default provider:
+    ```env
+    LLM_PROVIDER=gemini
+    GEMINI_API_KEY=...
+    GEMINI_MODEL_NAME=gemini-3-flash-preview
+    ```
+
+    DeepSeek is supported through its OpenAI-compatible API:
+    ```env
+    LLM_PROVIDER=deepseek
+    DEEPSEEK_API_KEY=...
+    DEEPSEEK_MODEL_NAME=deepseek-chat
+    DEEPSEEK_BASE_URL=https://api.deepseek.com
+    ```
+
+    OpenAI is also supported:
+    ```env
+    LLM_PROVIDER=openai
+    OPENAI_API_KEY=...
+    OPENAI_MODEL_NAME=gpt-4o-mini
+    ```
+
+    For other OpenAI-compatible providers:
+    ```env
+    LLM_PROVIDER=openai-compatible
+    OPENAI_COMPATIBLE_API_KEY=...
+    OPENAI_COMPATIBLE_BASE_URL=https://provider.example.com/v1
+    OPENAI_COMPATIBLE_MODEL_NAME=provider-model-name
     ```
 
 ## Usage

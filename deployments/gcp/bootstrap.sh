@@ -37,7 +37,13 @@ echo "Required variables:"
 echo "  REDDIT_CLIENT_ID=your_client_id"
 echo "  REDDIT_CLIENT_SECRET=your_client_secret"
 echo "  REDDIT_USER_AGENT=your_user_agent"
+echo "  LLM_PROVIDER=gemini"
 echo "  GEMINI_API_KEY=your_gemini_key"
+echo ""
+echo "Optional alternatives:"
+echo "  LLM_PROVIDER=deepseek"
+echo "  DEEPSEEK_API_KEY=your_deepseek_key"
+echo "  DEEPSEEK_MODEL_NAME=deepseek-chat"
 echo ""
 
 # Configure git
