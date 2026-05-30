@@ -12,6 +12,11 @@ import glob  # noqa: E402
 import markdown  # noqa: E402
 from datetime import datetime  # noqa: E402
 
+project_root = os.path.dirname(script_dir)
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+from wsbreporter import config  # noqa: E402
+
 # Define paths
 BASE_DIR = script_dir  # We can use the captured script_dir
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
@@ -77,7 +82,8 @@ def generate_navigation(prev_file, next_file, nav_template, catalog_url="catalog
     else:
         nav_links.append('<span style="color: grey;">Next</span>')
 
-    return nav_template.replace("{{NAV_LINKS}}", " | ".join(nav_links))
+    sep = '<span style="margin: 0 0.75rem; color: var(--text-muted);">·</span>'
+    return nav_template.replace("{{NAV_LINKS}}", sep.join(nav_links))
 
 
 def convert_markdown_to_html(content):
@@ -117,7 +123,7 @@ def generate_pages(markdown_files, base_template, inner_template, nav_template):
         full_content = (
             inner_template.replace("{{NAV_TOP}}", nav_html)
             .replace("{{LETTER_CONTENT}}", html_content)
-            .replace("{{NAV_BOTTOM}}", nav_html)
+            .replace("{{NAV_BOTTOM}}", "")
         )
 
         # Fill Base Template
@@ -125,6 +131,7 @@ def generate_pages(markdown_files, base_template, inner_template, nav_template):
             base_template.replace("{{SUBREDDIT}}", "wallstreetbets")
             .replace("{{DATE_YMD}}", file_date.strftime("%Y-%m-%d"))
             .replace("{{DATE_FULL}}", full_date_str)
+            .replace("{{MODEL_NAME}}", config.get_llm_display_name())
             .replace("{{CONTENT}}", full_content)
         )
 
@@ -149,24 +156,38 @@ def generate_pages(markdown_files, base_template, inner_template, nav_template):
 
 
 def generate_catalog(pages, base_template, inner_template):
-    # Sort pages reverse chronological for catalog
     sorted_pages = sorted(pages, key=lambda x: x["date"], reverse=True)
 
-    catalog_items = []
+    items_by_month: dict[str, list] = {}
     for page in sorted_pages:
-        # Format: "January 30, 2026 - The Subject Line"
-        link_text = f"{page['display_date']} - {page['title']}"
-        catalog_items.append(f'<li><a href="{page["url"]}">{link_text}</a></li>')
+        key = page["date"].strftime("%Y-%m")
+        items_by_month.setdefault(key, []).append(page)
 
-    catalog_content = inner_template.replace(
-        "{{CATALOG_ITEMS}}", "".join(catalog_items)
-    )
+    all_items = []
+    for month_key in sorted(items_by_month, reverse=True):
+        dt = datetime.strptime(month_key, "%Y-%m")
+        month_label = dt.strftime("%B %Y")
+        all_items.append(
+            f'<h2 style="margin-top: 2rem; margin-bottom: 1rem; '
+            f'font-size: 0.8125rem; font-weight: 600; text-transform: uppercase; '
+            f'letter-spacing: 0.08em; color: var(--muted);">'
+            f'{month_label}</h2>'
+        )
+        for item in items_by_month[month_key]:
+            all_items.append(
+                f'<li style="margin-bottom: 1.25rem;">'
+                f'<div style="font-size: 0.8125rem; color: var(--text-muted);">{item["display_date"]}</div>'
+                f'<a href="{item["url"]}">{item["title"]}</a>'
+                f'</li>'
+            )
 
-    # Fill Base Template for Catalog
+    catalog_content = inner_template.replace("{{CATALOG_ITEMS}}", "".join(all_items))
+
     page_html = (
         base_template.replace("{{SUBREDDIT}}", "wallstreetbets")
         .replace("{{DATE_YMD}}", datetime.now().strftime("%Y-%m-%d"))
         .replace("{{DATE_FULL}}", format_date(datetime.now()))
+        .replace("{{MODEL_NAME}}", config.get_llm_display_name())
         .replace("{{CONTENT}}", catalog_content)
     )
 
@@ -294,6 +315,7 @@ def generate_disclaimer(base_template):
         base_template.replace("{{SUBREDDIT}}", "wallstreetbets")
         .replace("{{DATE_YMD}}", datetime.now().strftime("%Y-%m-%d"))
         .replace("{{DATE_FULL}}", format_date(datetime.now()))
+        .replace("{{MODEL_NAME}}", config.get_llm_display_name())
         .replace("{{CONTENT}}", disclaimer_content)
     )
 

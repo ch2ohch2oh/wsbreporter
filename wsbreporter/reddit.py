@@ -2,7 +2,13 @@ import praw
 from . import config
 
 
-def fetch_top_posts(num_posts=None, subreddit=None, sort_by="hot", skip_pinned=False):
+def fetch_top_posts(
+    num_posts=None,
+    subreddit=None,
+    sort_by="hot",
+    skip_pinned=False,
+    fetch_comments=True,
+):
     """
     Fetches posts from the configured subreddit.
 
@@ -21,11 +27,7 @@ def fetch_top_posts(num_posts=None, subreddit=None, sort_by="hot", skip_pinned=F
     num_posts = num_posts or config.NUM_POSTS_TO_FETCH
     subreddit = subreddit or config.SUBREDDIT_NAME
     try:
-        reddit = praw.Reddit(
-            client_id=config.REDDIT_CLIENT_ID,
-            client_secret=config.REDDIT_CLIENT_SECRET,
-            user_agent=config.REDDIT_USER_AGENT,
-        )
+        reddit = _reddit()
 
         subreddit_obj = reddit.subreddit(subreddit)
         posts_data = []
@@ -52,28 +54,21 @@ def fetch_top_posts(num_posts=None, subreddit=None, sort_by="hot", skip_pinned=F
             if len(posts_data) >= num_posts:
                 break
 
-            post_comments = []
-            # Fetch top comments, up to a certain limit or depth
-            submission.comments.replace_more(limit=0)  # Flatten comments
-            for i, comment in enumerate(submission.comments):
-                if i >= config.NUM_COMMENTS_TO_FETCH:  # Limit comments based on config
-                    break
-                if hasattr(comment, "body"):
-                    comment_link = f"https://www.reddit.com{comment.permalink}"
-                    post_comments.append(
-                        {
-                            "body": comment.body,
-                            "url": comment_link,
-                            "score": comment.score,
-                        }
-                    )
+            post_comments = (
+                _fetch_submission_comments(submission) if fetch_comments else []
+            )
 
             posts_data.append(
                 {
+                    "reddit_id": submission.id,
                     "title": submission.title,
                     "selftext": submission.selftext,
                     "url": submission.url,
+                    "author": str(submission.author) if submission.author else None,
                     "score": submission.score,
+                    "upvote_ratio": submission.upvote_ratio,
+                    "num_comments": submission.num_comments,
+                    "created_utc": str(submission.created_utc),
                     "comments": post_comments,
                     "is_pinned": submission.stickied,  # Mark if it's a pinned post
                 }
@@ -82,6 +77,50 @@ def fetch_top_posts(num_posts=None, subreddit=None, sort_by="hot", skip_pinned=F
     except Exception as e:
         print(f"Error fetching Reddit posts: {e}")
         return None
+
+
+def fetch_comments_for_posts(post_ids: list[str]) -> dict[str, list[dict]]:
+    try:
+        reddit = _reddit()
+        comments_by_post = {}
+
+        for post_id in post_ids:
+            submission = reddit.submission(id=post_id)
+            comments_by_post[post_id] = _fetch_submission_comments(submission)
+
+        return comments_by_post
+    except Exception as e:
+        print(f"Error fetching Reddit comments: {e}")
+        return {}
+
+
+def _reddit():
+    return praw.Reddit(
+        client_id=config.REDDIT_CLIENT_ID,
+        client_secret=config.REDDIT_CLIENT_SECRET,
+        user_agent=config.REDDIT_USER_AGENT,
+    )
+
+
+def _fetch_submission_comments(submission) -> list[dict]:
+    post_comments = []
+    submission.comments.replace_more(limit=0)
+    for i, comment in enumerate(submission.comments):
+        if i >= config.NUM_COMMENTS_TO_FETCH:
+            break
+        if hasattr(comment, "body"):
+            comment_link = f"https://www.reddit.com{comment.permalink}"
+            post_comments.append(
+                {
+                    "reddit_id": comment.id,
+                    "body": comment.body,
+                    "url": comment_link,
+                    "author": str(comment.author) if comment.author else None,
+                    "score": comment.score,
+                    "created_utc": str(comment.created_utc),
+                }
+            )
+    return post_comments
 
 
 if __name__ == "__main__":

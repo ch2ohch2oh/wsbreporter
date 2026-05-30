@@ -1,12 +1,16 @@
 """
-HTML formatter for WSB summaries.
+HTML rendering for WSB summaries.
 Converts markdown summaries to styled HTML.
 """
 
+import argparse
+import os
 from datetime import datetime
 import markdown
 import re
 import pytz
+
+from . import config
 
 
 def markdown_to_html(markdown_text: str, subreddit: str = "wallstreetbets") -> str:
@@ -50,10 +54,6 @@ def markdown_to_html(markdown_text: str, subreddit: str = "wallstreetbets") -> s
                 # If all parsing fails, fall back to current time (already set)
                 pass
 
-    # Valid keys: {{SUBREDDIT}}, {{DATE_YMD}}, {{BASE_URL}}, {{CONTENT}}, {{DATE_FULL}}
-
-    import os
-
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     template_path = os.path.join(project_root, "templates", "report_template.html")
 
@@ -65,6 +65,7 @@ def markdown_to_html(markdown_text: str, subreddit: str = "wallstreetbets") -> s
         html_doc = html_doc.replace("{{DATE_YMD}}", base_date.strftime("%Y-%m-%d"))
         html_doc = html_doc.replace("{{CONTENT}}", html_content)
         html_doc = html_doc.replace("{{DATE_FULL}}", date_str)
+        html_doc = html_doc.replace("{{MODEL_NAME}}", config.get_llm_display_name())
 
     except FileNotFoundError:
         print(f"Error: Template file not found at {template_path}")
@@ -98,3 +99,46 @@ def save_html_report(
     except Exception as e:
         print(f"Error saving HTML report: {e}")
         return False
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Render a Markdown report as HTML")
+    parser.add_argument("input_file", help="Path to the input Markdown file")
+    parser.add_argument(
+        "-o", "--output", help="Path to the output HTML file (optional)"
+    )
+    parser.add_argument(
+        "-s",
+        "--subreddit",
+        default="wallstreetbets",
+        help="Subreddit name for the title (default: wallstreetbets)",
+    )
+    args = parser.parse_args()
+
+    if not os.path.exists(args.input_file):
+        print(f"Error: Input file '{args.input_file}' not found.")
+        raise SystemExit(1)
+
+    try:
+        with open(args.input_file, "r", encoding="utf-8") as f:
+            markdown_text = f.read()
+    except Exception as e:
+        print(f"Error reading file: {e}")
+        raise SystemExit(1)
+
+    if args.output:
+        output_path = args.output
+    else:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_path = os.path.join(os.getcwd(), f"wsb_summary_{timestamp}.html")
+
+    print(f"Rendering report for r/{args.subreddit}...")
+    if save_html_report(markdown_text, output_path, args.subreddit):
+        print(f"HTML report saved to: {output_path}")
+    else:
+        print("Failed to save HTML report")
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()

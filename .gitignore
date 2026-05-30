@@ -4,6 +4,7 @@
 # Ignore HTML reports
 ./*.html
 _site/
+data/
 
 # Python
 __pycache__/
